@@ -485,12 +485,224 @@ eggs and spam
       ​			shape为（3，3，2）的数组能和（3，2）的数组进行计算
 
 - **轴（axis）**
+
   - 对于一维数组只有一个轴，叫做0轴。对于二维数组有两个轴，叫做0和1轴。
     - 0轴为数组的行方向，1轴为数组的列方向，2为数组的深度方向。
+  - np.sum(t,axis = 0)表示对每一列的数字进行求和。当axis为1时表示对每一行的数字进行求和。
 
-- **numpy读取数据**
+- **numpy读取和存储数据**
 
   - 从CSV中读，csv：Comma-Separaed Value,逗号分隔值文件。
   - 使用：np.loadtxt(frame.dtype=np.float,delimiter=None,skiprows=0,usecols=None,unpack=False)
 
   ![](https://pic.imgdb.cn/item/65b4d921871b83018aa84048.jpg)
+
+  - unpack：默认为False即不转置，若设置为True则为转置。
+
+- **numpy中的转置**
+
+  - .transpose() 
+  - .T
+  - .swapaxes(1,0)(交换轴，1轴和0轴进行交换，即行列互换)
+
+- **numpy索引和切片**
+
+  - 用于选择其中的某一行或某一列。
+
+  - 取行和取列：
+
+    - t[x,y]，x代表行，y代表列，t[2,3]对1行2列数据进行读取
+
+  - 取行：
+
+    - 取单行：t[1]表示二维数组t的第2行 
+    - 取连续多行：t[2:]表示二维数组t的第3行开始连续取行
+    - 取不连续多行：t[[2,8,10]]表示不连续的取二维数组t的第3、9、11行
+
+  - 取列：
+
+    - 取单列：t[:,0]表示取第1列
+
+    - 取连续多列：t[:,2:]表示取第3列开始的连续多列
+
+    - 取不连续多列：t[:,[0,2]]表示取第1列和第3列
+
+      *同理，也可以对行进行*
+
+  - 取多行和多列：
+
+    - t[2:5,1:4]表示去第三行到第四行和第二列到第三列的交叉位置
+
+  - 取多个不相邻的点：
+
+    - t[[0,2],[0,1]]表示取第（0，0）和（2，1）位置的点 
+
+- **numpy中的数值的修改**
+
+  - numpy中布尔索引
+    - t<10会使数组里的元素中小于10的赋值为True，其他赋值为False
+  - numpy中三元运算符
+    - np.where(t<10,x,y)表示t数组中，小于10的替换为x，大于10的替代为y
+  - numpy中的clip
+    - t.clip(10,18)表示小于10的替换为10，大于18的替换为18
+
+- **数组的拼接**
+
+  - 竖直拼接np.vstack(t1,t2)(*竖直分割，横着分割数组*)
+  - 水平拼接np.hstack(t1,t2)(*水平分割，竖直分割数组*)
+
+- **数组的行列交换**
+
+  - 行交换：t[[1,2],:] = t[[2,1],;],实现了行2，3之间的交换
+  - 列交换：t[:,[0,2]] = t[:,[2,0]]实现了行1和行3之间的交换
+
+- **numpy其他好用方法**
+
+  - 创建一个全为0的数组：np.zero((3,4)) ,3行4列
+  - 创建一个全为1的数组：np.ones((3,4))
+  - 创建一个对角线为1的方阵（正方形数组）：np.eye(3) 3行3列
+  - 获取最大值最小值的位置：
+    - np.argmax(t,axis=0)
+    - np.argmin(t,axis=1)
+
+- **numpy生成随机数**
+
+  - ![](https://pic.imgdb.cn/item/65b6652f871b83018af42b5f.jpg)
+
+- **numpy的copy和view**
+  - a = b完全不复制，a和b相互影响
+  - a = b[:],视图操作，一种切片，会创建新的对象a，但是a的数据完全由b保管，他们两个的数据变化是一致的
+  - a = b.copy()，复制，a和b互不影响
+
+- **numpy中的nan和inf**
+
+  - 当读取本地文件为float时，如果有缺失，就会出现nan（not a number）
+  - 但做了一个不适合的计算的时候，比如无穷大减去无穷大
+  - inf是无限的意思，当一个非零数字除以0时，python中会报错，显示为inf
+  - nan的注意点
+    - 两个nan是不相等的
+    - np.count_nonzero（）原本用于计算不为0的个数，当加上t!=t时，即np.count_nonzero(t!=t)，可以用于统计数组中nan的个数。因为t!=t,可以让数组中nan为True，其他未false
+    - 也可以np.isnan(t)，这个与 t！=t操作结果相同
+    - nan与其他任何值计算结果都为nan
+
+- **numpy中常用统计函数**
+
+  - ![](https://pic.imgdb.cn/item/65b71cab871b83018ab989ad.jpg)
+
+  注意t和np
+
+------
+
+
+
+## 1.29 matplotlib学习
+
+- **matplotlib是什么**
+  - matplotlib是python底层绘图库，将数据可视化，使得数据更加客观、更具有说服力。
+
+- **matplotlib基本要点**
+  - ![](https://pic.imgdb.cn/item/65b727b7871b83018ad98ec8.jpg)
+
+- **设置图片大小**
+
+  - ![](https://pic.imgdb.cn/item/65b72abe871b83018ae255ce.jpg)
+
+    figsize（x,y)中x，y分别表示长宽，dpi表示每英寸点的个数，可以让图片更清晰。
+
+  - 设置x轴的刻度：
+
+    - plt.xticks(x)   plt.xticks(range(2,25))表示从2到24每个整数点都画出来。
+    - _xtick\_labels = [i/2 for i in range (4,49)]
+
+  - 设置y轴的刻度：与x轴相同 yticks...
+
+  - 坐标轴刻度加字符串：
+
+    - ![](https://pic.imgdb.cn/item/65b7569d871b83018a6d05c8.jpg)
+
+- **设置中文设置**
+
+  - matplotlib不支持显示中文
+
+    ![](https://pic.imgdb.cn/item/65b757dc871b83018a70e54a.jpg)
+
+- **添加描述信息**
+
+  - ```python
+    plt.xlabel("time")
+    plt.ylabel("temputure ...")
+    plt.title("10点到12点每分钟的气温变化情况")
+    ```
+
+  - 绘制网格：plt.grid(alpha = x)   设置x的值可以调整网格的浅显度
+
+- **绘制散点图**
+
+  - plt.scatter(x,y) 
+
+- **绘制条形图**
+
+  - plt.bar(x,y,width = 0.2, color = "orange")
+
+    width表示长条的宽度，默认为0.8 
+
+- **绘制直方图**
+  - plt.hist(a,num_bins)传入需统计的数据和组数（组数num_bins = int((max(a)-min(a)) / bin_width)
+
+------
+
+
+
+## 1.29 pandas学习
+
+- **pandas是什么，为什么要学习它**
+
+  - pandas是一个python库，用于数据分析和数据操作。
+
+  - pandas能处理数值之外的其他类型的数据。
+
+- **pandas的常用数据类型**
+
+  - Series一维，带标签数组（标签相当于键）
+  - DataFrame二维，Series容器
+
+- **Series的创建**
+
+  - ```python
+    import pandas as pd
+    pd.Series([1,2,31,12,3,4])
+    ```
+
+  - 还可以通过字典来创建:
+
+    ![](https://pic.imgdb.cn/item/65b76a72871b83018ab1ea8d.jpg)
+
+    
+
+- **Series中的切片和索引**
+
+  - ![](https://pic.imgdb.cn/item/65b76c0c871b83018ab6b94b.jpg)
+  - Series对象本质上由两个数组构成，一个数组构成对象的键（index，索引），一个数组构成对象的值（values）。
+
+- **pandas读取外部数据**
+
+  - 读取csv文件：df  =  pd.red_csv("./dogNames2.csv")
+
+- **DataFrame**
+
+  - ![](https://pic.imgdb.cn/item/65b7b25d871b83018acb3a63.jpg)
+
+    pd.DataFrame(d1)
+
+  - 有行索引和列索引，行索引称为index，0轴，axis = 0列索引称为columns，1轴，axis = 1。
+
+  - DataFrame的基础属性和整体情况查询
+
+    ![](https://pic.imgdb.cn/item/65b7b57b871b83018adab947.jpg)
+
+    排序方法：df.sort_values(by = "Count_AnimalName",ascending = False)by后边加的是排序的根据值。True为升序，False为降序。
+
+- **pandas取行或者取列的注意点**
+
+  - 方括号写数组，表示取行，对行进行操作。
+  - 写字符串，表示取列索引，对列进行操作。
