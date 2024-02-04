@@ -1,0 +1,104 @@
+#忽略警告提示
+import warnings
+warnings.filterwarnings('ignore')
+
+#导入处理数据包
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
+#设置字体为宋体
+plt.rcParams['font.sans-serif'] = 'SimSun'
+#导入数据  训练数据集
+train = pd.read_csv(r"D:\googledownload\train.csv")
+
+#获取数据类型列的描述统计信息
+# print(train.describe())
+# print(train.info())
+
+#计算生存几率
+n = train["Survived"].value_counts()
+plt.figure(figsize = (6,6))
+plt.pie(n,autopct='%.2f%%',labels=['死亡','存活'],pctdistance=0.35,labeldistance=0.6,shadow = True,explode=[0,0.1],textprops=dict(size = 15))
+plt.title('总体生还概率')
+
+#不同性别乘客生还几率
+sex_count = train.groupby(by = 'Sex')['Survived'].value_counts()
+#两张饼图画在同一张图纸上
+plt.figure(figsize=(10,5))
+
+axes1 = plt.subplot(1,2,1)#一行子图，2列子图，最后一个1表示当前子图的位置是第一个
+axes1.pie(sex_count.loc['female'][::-1],autopct = '%.2f%%',labels=['死亡','存活'],pctdistance=0.4,labeldistance=0.6,shadow=True,explode = [0,0.1],textprops = dict(size = 15),colors = ['#FFFF00','#FFB6C1'],startangle = 90)
+axes1.set_title('女性生还率')
+
+axes2 = plt.subplot(1,2,2)
+axes2.pie(sex_count.loc['male'],autopct = '%.2f%%',labels=['死亡','存活'],pctdistance=0.4,labeldistance=0.6,shadow = True,explode = [0,0.1],textprops = dict(size = 15),colors = ['#2E8B57','#AFEEEE'],startangle = 90)
+axes2.set_title('男性生还率')
+
+#不同年龄段乘客生还几率
+age_range = train['Age']
+age_num,_ = np.histogram(age_range,range=[0,80],bins = 16)#该函数返回两个值，第一个是返回每个区间内的计数，第二个值是区间的边界。
+#各年龄阶段生还人数
+age_survived = []
+for age in range(5,81,5):
+    survived_num = train.loc[(age_range >= age-5) & (age_range <= age)]['Survived'].sum()
+    age_survived.append(survived_num)
+#绘制条形图
+plt.figure(figsize=(12,6))
+plt.bar(np.arange(2,78,5)+0.5,age_num,width=5,label='总人数',alpha=0.8)
+plt.bar(np.arange(2,78,5)+0.5,age_survived,width=5,label='生还人数')
+plt.xticks(range(0,81,5))
+plt.yticks(range(0,121,10))
+plt.xlabel('年龄',position=(0.95,0),fontsize = 15)
+plt.ylabel('人数',position=(0,0.95),fontsize = 15)
+plt.title('各年龄阶段人数和生还人数条形图')
+plt.grid(True,linestyle=':',alpha = 0.6)
+
+#不同登入港口乘客的生还几率
+embarked_count = train.groupby(by='Embarked')['Survived'].value_counts()
+# print(embarked_count)
+plt.figure(figsize=(15,5)) #三张图画一张纸上，长为15，宽为5
+tu1 = plt.subplot(1,3,1)#一共三个图在一张纸上，这是第一个
+tu1.pie(embarked_count.loc['C'][::-1],autopct = '%.2f%%',labels = ['死亡','存活'],pctdistance = 0.4,labeldistance = 0.6, shadow = True, explode=[0,0.1],textprops=dict(size = 15),colors=['#698B69','#76EE00'])
+tu1.set_title('法国瑟堡市乘客生还率')
+tu2 = plt.subplot(1,3,2)
+tu2.pie(embarked_count.loc['Q'],autopct = '%.2f%%',labels = ['死亡','存活'],pctdistance = 0.4, labeldistance = 0.6, shadow = True , explode=[0,0.1], textprops=dict(size = 15),colors=['#4169E1','#AFEEEE'])
+tu2.set_title('爱尔兰昆士敦乘客生还率')
+tu3 = plt.subplot(1,3,3)
+tu3.pie(embarked_count.loc['S'],autopct = '%.2f%%',labels = ['死亡','存活'],pctdistance = 0.4, labeldistance = 0.6, shadow = True , explode=[0,0.1], textprops=dict(size = 15),colors=['#9400D3','#FFB6C1'])
+tu3.set_title('英国南安市安普顿乘客生还率')
+
+#不同船舱等级乘客生还几率
+pclass_count = train.groupby(by = 'Pclass')['Survived'].value_counts()
+# print(pclass_count)
+plt.figure(figsize=(15,5))
+
+tu1 = plt.subplot(1,3,1)
+tu1.pie(pclass_count.loc[1][::-1],autopct='%.2f%%',labels=['死亡','存活'],pctdistance = 0.4,labeldistance = 0.6,shadow = True,explode=[0,0.1],textprops=dict(size=15),colors=['#4169E1','#AFEEEE'])
+tu1.set_title('一等舱乘客生还率')
+
+tu2 = plt.subplot(1,3,2)
+tu2.pie(pclass_count.loc[2],autopct='%.2f%%',labels=['死亡','存活'],pctdistance = 0.4,labeldistance = 0.6,shadow = True,explode=[0,0.1],textprops=dict(size=15),colors=['#4169E1','#AFEEEE'])
+tu2.set_title('二等舱乘客生还率')
+
+tu3 = plt.subplot(1,3,3)
+tu3.pie(pclass_count.loc[3],autopct='%.2f%%',labels=['死亡','存活'],pctdistance = 0.4,labeldistance = 0.6,shadow = True,explode=[0,0.1],textprops=dict(size=15),colors=['#4169E1','#AFEEEE'])
+tu3.set_title('三等舱乘客生还率')
+
+#不同票价乘客的生还率
+fare_count = train.groupby(by='Fare')['Survived'].value_counts()
+fare_count = pd.DataFrame(fare_count)
+fare_count.rename(columns={'Survived': 'Number'},inplace=True)
+fare_count.reset_index(inplace=True)
+print(fare_count)
+#统计出各票价的乘客总人数]
+fare_num = fare_count.groupby(by='Fare')['count'].sum()
+fare_num = pd.DataFrame(fare_num)
+fare_num.rename(columns={'count': 'Total'},inplace=True)
+print(fare_num)
+fare_survived = fare_count.loc[fare_count['Survived'] == 1]
+fare_survived = fare_survived.merge(fare_num,left_on='Fare',right_index=True,how='inner')
+print(fare_survived)
+#各票价生还率
+# survived_rate = fare_survived[]
+# plt.show()
