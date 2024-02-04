@@ -278,6 +278,7 @@ eggs and spam
   @staticmethod
   def 静态方法名([形参列表]):
   	方法体
+  
   ```
 
   静态方法和模块中定义的普通函数没有区别，只不过静态方法放到了类的名字空间里面，需要通过类调用。
@@ -317,6 +318,7 @@ eggs and spam
     ```python
     class 子类类名（父类1[,父类2,...]):
     	类体
+    
     ```
 
     如果在类定义中没有指定父类，则默认父类是object类。也就是说object是所有类的父类，里面定义了一些所有类的共有默认实现，比如：\_new_()
@@ -340,6 +342,7 @@ eggs and spam
     class B(A):pass
     class C(B):pass
     print(C.mro())
+    
     ```
 
 ------
@@ -441,6 +444,7 @@ eggs and spam
     a = np.array([1,2,3,4,5])
     b = np.array(range(1,6))
     c = np.arange(1,6)
+    
     ```
 
     以上效果相同，a,b,c均为numpy.ndarray类型。
@@ -488,7 +492,8 @@ eggs and spam
 
   - 对于一维数组只有一个轴，叫做0轴。对于二维数组有两个轴，叫做0和1轴。
     - 0轴为数组的行方向，1轴为数组的列方向，2为数组的深度方向。
-  - np.sum(t,axis = 0)表示对每一列的数字进行求和。当axis为1时表示对每一行的数字进行求和。
+
+- np.sum(t,axis = 0)表示对每一列的数字进行求和。当axis为1时表示对每一行的数字进行求和。
 
 - **numpy读取和存储数据**
 
@@ -570,6 +575,7 @@ eggs and spam
   - ![](https://pic.imgdb.cn/item/65b6652f871b83018af42b5f.jpg)
 
 - **numpy的copy和view**
+
   - a = b完全不复制，a和b相互影响
   - a = b[:],视图操作，一种切片，会创建新的对象a，但是a的数据完全由b保管，他们两个的数据变化是一致的
   - a = b.copy()，复制，a和b互不影响
@@ -598,10 +604,12 @@ eggs and spam
 ## 1.29 matplotlib学习
 
 - **matplotlib是什么**
-  - matplotlib是python底层绘图库，将数据可视化，使得数据更加客观、更具有说服力。
+
+- matplotlib是python底层绘图库，将数据可视化，使得数据更加客观、更具有说服力。
 
 - **matplotlib基本要点**
-  - ![](https://pic.imgdb.cn/item/65b727b7871b83018ad98ec8.jpg)
+
+- ![](https://pic.imgdb.cn/item/65b727b7871b83018ad98ec8.jpg)
 
 - **设置图片大小**
 
@@ -632,6 +640,7 @@ eggs and spam
     plt.xlabel("time")
     plt.ylabel("temputure ...")
     plt.title("10点到12点每分钟的气温变化情况")
+    
     ```
 
   - 绘制网格：plt.grid(alpha = x)   设置x的值可以调整网格的浅显度
@@ -647,6 +656,7 @@ eggs and spam
     width表示长条的宽度，默认为0.8 
 
 - **绘制直方图**
+
   - plt.hist(a,num_bins)传入需统计的数据和组数（组数num_bins = int((max(a)-min(a)) / bin_width)
 
 ------
@@ -658,7 +668,6 @@ eggs and spam
 - **pandas是什么，为什么要学习它**
 
   - pandas是一个python库，用于数据分析和数据操作。
-
   - pandas能处理数值之外的其他类型的数据。
 
 - **pandas的常用数据类型**
@@ -671,6 +680,7 @@ eggs and spam
   - ```python
     import pandas as pd
     pd.Series([1,2,31,12,3,4])
+    
     ```
 
   - 还可以通过字典来创建:
@@ -704,5 +714,43 @@ eggs and spam
 
 - **pandas取行或者取列的注意点**
 
-  - 方括号写数组，表示取行，对行进行操作。
+  - 方括号写数组，表示取行，对行进行操作。df[:100]表示取前100行。
   - 写字符串，表示取列索引，对列进行操作。
+
+- **pandas之loc**
+
+  - df.loc通过标签索引行数据
+
+  - df.iloc通过位置获取行数据
+
+    ![](https://pic.imgdb.cn/item/65b86514871b83018a8a14a8.jpg)
+
+    在loc中冒号是闭合的，即会选择到冒号后边的值。
+
+- **pandas之布尔索引**
+
+  - 例如：df[df["Count"]>100]行索引count对应值大于100的
+  - 需要用到&(且）和|（或），如：df[（df["Count"]>100] ）& （df[df["count"]<1000）]    *不同条件之间需要用括号括起来。*
+
+- **pandas之字符串方法**
+
+  - ![](https://pic.imgdb.cn/item/65b8699f871b83018a971d50.jpg)
+
+- **缺失数据处理**
+
+  - 缺失数据情况有两种：
+    - 空，None，NaN和numpy中nan一样
+    - 为0
+  - 判断是否为NaN：
+    - pd.isnull(t)
+    - pd.notnull(t)
+    - t3.[pd.notnull(t3["w"])]表示t3中w那一列不为NaN的那一行
+  - 使用dropna
+    - t3.dropna(axis = 0,how = "any")表示以行为单位，对行进行检查，只要有Nan则抛掉该行,how默认为any（即不写how时会默认为any）
+    - t3.dropna(axis = 0,how = "all")表示检查行，需要满足该行全为nan才抛掉该行。
+    - t3.dropna(axis = 0,how = "any",inplace = True) inplace为True表示进行原地修改，False表示不进行原地修改。
+  - 填充数据
+    - t2.fillna(0) ,表示把nan替换为0
+  - 处理为0的数据
+    - t[t == 0] = np.nan ，若0为无效数据，可以进行该操作，若0有意义则可保留。
+    - 在pandas中，nan进行计算时不会算进去，但是0会。
